@@ -61,7 +61,7 @@
     let validCNPJs = [];
 
     // Carregar os CNPJs do arquivo JSON hospedado
-    fetch("https://centralcomunica.callink.com.br/wp-content/uploads/2025/07/cnpjs_convertido.json")
+    fetch("cnpj.json")
       .then(response => {
         if (!response.ok) {
           throw new Error("Erro ao carregar o JSON.");
