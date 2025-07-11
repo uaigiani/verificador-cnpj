@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verificação de CNPJ</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ed1c24;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 300px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #ed1c24;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #c1121b;
+    }
+    #resultado {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Verificação de CNPJ</h2>
+    <input type="text" id="cnpj" placeholder="Digite o CNPJ">
+    <button onclick="verificarCNPJ()">Verificar</button>
+    <div id="resultado"></div>
+  </div>
+
+  <script>
+    let validCNPJs = [];
+
+    // Carregar os CNPJs do arquivo JSON hospedado
+    fetch("https://centralcomunica.callink.com.br/wp-content/uploads/2025/07/cnpjs_convertido.json")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Erro ao carregar o JSON.");
+        }
+        return response.json();
+      })
+      .then(data => {
+        validCNPJs = data.validos.map(cnpj => cnpj.replace(/\D/g, '').padStart(14, '0'));
+      })
+      .catch(error => {
+        console.error("Erro ao carregar o JSON:", error);
+        $('#resultado').html("⚠️ Erro ao carregar lista de CNPJs.");
+      });
+
+    function formatarCNPJ(cnpj) {
+      return cnpj.replace(/\D/g, '').padStart(14, '0');
+    }
+
+    function verificarCNPJ() {
+      const cnpjInput = $('#cnpj').val();
+      const cnpj = formatarCNPJ(cnpjInput);
+
+      if (validCNPJs.length === 0) {
+        $('#resultado').html("⚠️ Lista de CNPJs ainda não carregada.");
+        return;
+      }
+
+      if (validCNPJs.includes(cnpj)) {
+        $('#resultado').html("✅ Oferta Trade In Válida.");
+      } else {
+        $('#resultado').html("❌ Sem oferta Trade In.");
+      }
+    }
+  </script>
+</body>
+</html>
